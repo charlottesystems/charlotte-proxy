@@ -7,7 +7,7 @@ import json
 
 app = Flask(__name__)
 CORS(app, origins=[
-    'https://giuliodigia96.github.io',
+    'https://charlottesystems.github.io',
     'http://localhost',
     'http://127.0.0.1'
 ], supports_credentials=False)
