@@ -1,4 +1,7 @@
 flask
 flask-cors
 requests
+gspread
+google-auth
+google-auth-oauthlib
 gunicorn
