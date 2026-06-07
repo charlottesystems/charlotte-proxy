@@ -6,7 +6,11 @@ import base64
 import json
 
 app = Flask(__name__)
-CORS(app)
+CORS(app, origins=[
+    'https://giuliodigia96.github.io',
+    'http://localhost',
+    'http://127.0.0.1'
+], supports_credentials=False)
 
 PLATE_RECOGNIZER_TOKEN = os.environ.get('PLATE_RECOGNIZER_TOKEN', '')
 
@@ -14,17 +18,20 @@ PLATE_RECOGNIZER_TOKEN = os.environ.get('PLATE_RECOGNIZER_TOKEN', '')
 def health():
     return jsonify({'status': 'ok'})
 
-@app.route('/read-plate', methods=['POST'])
+@app.route('/read-plate', methods=['POST', 'OPTIONS'])
 def read_plate():
-    # Accetta sia JSON base64 che multipart/form-data
+    if request.method == 'OPTIONS':
+        return '', 204
+
+    # Accetta JSON base64
     if request.content_type and 'application/json' in request.content_type:
         data = request.get_json()
         if not data or 'image' not in data:
             return jsonify({'error': 'Nessuna immagine ricevuta'}), 400
-        
+
         image_bytes = base64.b64decode(data['image'])
         mime = data.get('mime', 'image/jpeg')
-        
+
         response = requests.post(
             'https://api.platerecognizer.com/v1/plate-reader/',
             headers={'Authorization': f'Token {PLATE_RECOGNIZER_TOKEN}'},
